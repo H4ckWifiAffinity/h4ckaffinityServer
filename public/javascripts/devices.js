@@ -8,6 +8,14 @@ $(document).ready(function() {
     // Username link click
     $('#deviceList table tbody').on('click', 'td a.link-show-device-info', showDeviceInfo);
 
+    var socket = io();
+
+    socket.emit("message", "yo", "Hola!");
+
+    socket.on('msg_res', function(msg){
+        console.log("recibido: ",msg.payload);
+    });
+
 });
 
 function populateTable() {
