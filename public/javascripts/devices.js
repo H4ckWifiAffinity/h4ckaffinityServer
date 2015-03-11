@@ -23,6 +23,7 @@ function populateTable() {
             tableContent += '<tr>';
             tableContent += '<td><a href="#" class="link-show-device-info" rel="' + this._id + '">' + this._id + '</a></td>';
             tableContent += '<td>' + this.averageSignal.toFixed(0) + '</td>';
+            tableContent += '<td>' + calculateDistance(this.averageSignal).toFixed(0) + '</td>';
             tableContent += '<td>' + this.count + '</td>';
             tableContent += '</tr>';
         });
@@ -50,6 +51,7 @@ function showDeviceInfo(e) {
                 tableContent += '<td>' + this.type + '</td>';
                 tableContent += '<td>' + this.time + '</td>';
                 tableContent += '<td>' + this.signal + '</td>';
+                tableContent += '<td>' + calculateDistance(this.signal, this.freq).toFixed(0) + '</td>';
                 tableContent += '<td>' + this.noise + '</td>';
                 tableContent += '<td>' + this.bssid + '</td>';
                 tableContent += '<td>' + this.dst + '</td>';
