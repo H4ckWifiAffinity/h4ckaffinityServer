@@ -3,43 +3,42 @@
 $(document).ready(function() {
 
     // Populate the device table on initial page load
-    populateTable();
+    //    populateTable();
 
     // Username link click
     $('#deviceList table tbody').on('click', 'td a.link-show-device-info', showDeviceInfo);
 
     var socket = io();
 
-    socket.emit("message", "yo", "Hola!");
-
-    socket.on('msg_res', function(msg){
-        console.log("recibido: ",msg.payload);
+    socket.emit("listen-dumps");
+    socket.on("item-stored", function(data){
+        console.log("respuesta item-stored");
+        addRows(data);
     });
 
 });
 
 function populateTable() {
-
-    // Empty content string
-    var tableContent = '';
-
     // jQuery AJAX call for JSON
     $.getJSON( '/api/devicelist', function( data ) {
-
-        // For each item in our JSON, add a table row and cells to the content string
-        $.each(data, function(){
-            tableContent += '<tr>';
-            tableContent += '<td><a href="#" class="link-show-device-info" rel="' + this._id + '">' + this._id + '</a></td>';
-            tableContent += '<td>' + this.averageSignal.toFixed(0) + '</td>';
-            tableContent += '<td>' + calculateDistance(this.averageSignal).toFixed(0) + '</td>';
-            tableContent += '<td>' + this.count + '</td>';
-            tableContent += '</tr>';
-        });
-
-        // Inject the whole content string into our existing HTML table
-        $('#deviceList table tbody').html(tableContent);
+        addRows(data);
     });
-};
+}
+
+function addRows(data){
+    var tableContent = '';
+    $.each(data, function(){
+        tableContent += '<tr>';
+        tableContent += '<td><a href="#" class="link-show-device-info" rel="' + this._id + '">' + this._id + '</a></td>';
+        tableContent += '<td>' + this.averageSignal.toFixed(0) + '</td>';
+        tableContent += '<td>' + calculateDistance(this.averageSignal).toFixed(0) + '</td>';
+        tableContent += '<td>' + this.count + '</td>';
+        tableContent += '</tr>';
+    });
+
+    // Inject the whole content string into our existing HTML table
+    $('#deviceList table tbody').html(tableContent);
+}
 
 function showDeviceInfo(e) {
     e.stopPropagation();

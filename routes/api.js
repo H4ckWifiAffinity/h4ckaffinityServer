@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
-
+var mongoUtil = require( '../modules/mongoUtil');
 
 /*
  * POST to add raw dump.
  */
 router.post('/adddump', function(req, res) {
-    var db = req.db;
+    var db = mongoUtil.getDb();
     console.log("-------------------------------------------------------------");
     console.log(req.body);
     db.collection('raw_dump').insert(req.body, function(err, result){
@@ -21,7 +21,7 @@ router.post('/adddump', function(req, res) {
  * GET deviceList.
  */
 router.get('/devicelist', function(req, res) {
-    var db = req.db;
+    var db = mongoUtil.getDb();
     db.collection('raw_dump').aggregate(
         {
             $match : {type : "request"}
@@ -39,7 +39,7 @@ router.get('/devicelist', function(req, res) {
  */
 router.get('/deviceframes/:mac', function(req, res) {
 
-    var db = req.db,
+    var db = mongoUtil.getDb(),
         r = /([a-f0-9]{2})([a-f0-9]{2})/i,
         mac = req.params.mac;
     while (r.test(mac)) {
