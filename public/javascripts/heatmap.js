@@ -1,7 +1,18 @@
 "use strict"
 
 $(document).ready(function() {
-    renderMap();
+    var renderedMap = renderMap();
+
+    var socket = io();
+
+    setInterval(function(){
+        socket.emit("listen-dumps");
+    }, 1000);
+
+    socket.on("item-stored", function(data){
+        drawPoints(renderedMap, JSON.parse(data));
+    });
+
 });
 
 function renderMap() {
@@ -9,12 +20,6 @@ function renderMap() {
         canvas,
         heatmap,
         router_image;
-
-    //router_image = new Image();
-    //router_image.src = '/images/router.png';
-    //router_image.onload = function () {
-    //    document.getElementById("canv").getContext("2d").drawImage(router_image, 370, 270);
-    //};
 
     canvas = document.getElementById("canv");
     heatmap = createWebGLHeatmap({canvas: canvas, intensityToAlpha: true});
@@ -34,9 +39,9 @@ function renderMap() {
         //heatmap.adjustSize(); // can be commented out for statically sized heatmaps, resize clears the map
         heatmap.update(); // adds the buffered points
         heatmap.display(); // adds the buffered points
-        //heatmap.multiply(0.9995);
-        //heatmap.blur();
-        //heatmap.clamp(0.0, 1.0); // depending on usecase you might want to clamp it
+        heatmap.multiply(0.9995);
+        heatmap.blur();
+        heatmap.clamp(0.0, 1.0); // depending on usecase you might want to clamp it
         raf(update);
     }
     raf(update);
@@ -45,27 +50,38 @@ function renderMap() {
         heatmap.clear();
     }
 
+
+    $.getJSON('/api/devicelist', function (data) {
+        drawPoints(heatmap, data);
+    });
+
+    return heatmap;
+}
+
+function drawPoints(heatmap, data) {
     //TODO: Determine the best values to show the heatmap properlly
-    var center_x = canvas.width / 2,
-        center_y = canvas.height / 2,
+    var center_x = heatmap.width / 2,
+        center_y = heatmap.height / 2,
         max_radius = center_x > center_y ? center_y : center_x,
         max_ssi = -65,
         min_ssi = -40;
-/*    console.log(center_x);
-    console.log(center_y);
-    console.log(max_radius);*/
+    /*    console.log(center_x);
+     console.log(center_y);
+     console.log(max_radius);*/
+    $.each(data, function (index, value) {
+        var avg_ssi;
+        if (value.averageSignal){
+            avg_ssi = value.averageSignal.toFixed(0) * -1;
+        } else {
+            avg_ssi = value.signal.toFixed(0) * -1;
+        }
 
-        $.getJSON('/api/devicelist', function (data) {
-            $.each(data, function ( index, value ) {
+        //normalized_ssi = (avg_ssi + min_ssi) * (max_radius / -(max_ssi - min_ssi));,
+        var distance = calculateDistance(avg_ssi),
+            normalized_distance = distance * max_radius / 10;
 
-                var avg_ssi = value.averageSignal.toFixed(0) * -1,
-                //normalized_ssi = (avg_ssi + min_ssi) * (max_radius / -(max_ssi - min_ssi));,
-                    distance = calculateDistance(avg_ssi),
-                    normalized_distance = distance * max_radius / 30;
-                    console.log("normalized_distance: ",normalized_distance);
-                heatmap.addPoint(center_x, center_y, normalized_distance, 0.1);
-            });
-        });
-
+        //console.log("normalized_distance: ", normalized_distance);
+        heatmap.addPoint(center_x, center_y, normalized_distance, 0.1);
+    });
 }
 

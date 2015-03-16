@@ -1,19 +1,17 @@
 var express = require('express');
 var router = express.Router();
 var mongoUtil = require( '../modules/mongoUtil');
+var queueModule = require( '../modules/queueModule');
 
 /*
  * POST to add raw dump.
  */
 router.post('/adddump', function(req, res) {
     var db = mongoUtil.getDb();
-    console.log("-------------------------------------------------------------");
-    console.log(req.body);
     db.collection('raw_dump').insert(req.body, function(err, result){
-        console.log("----------------------// dump added //-----------------------");
-        res.send(
-            (err === null) ? { msg: '' } : { msg: err }
-        );
+        //console.log("result: ", JSON.stringify(result));
+        queueModule.push(JSON.stringify(result));
+        res.sendStatus(200);
     });
 });
 

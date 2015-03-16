@@ -3,18 +3,10 @@
 $(document).ready(function() {
 
     // Populate the device table on initial page load
-    //    populateTable();
+        populateTable();
 
     // Username link click
     $('#deviceList table tbody').on('click', 'td a.link-show-device-info', showDeviceInfo);
-
-    var socket = io();
-
-    socket.emit("listen-dumps");
-    socket.on("item-stored", function(data){
-        console.log("respuesta item-stored");
-        addRows(data);
-    });
 
 });
 
