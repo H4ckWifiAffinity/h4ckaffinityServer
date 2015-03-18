@@ -9,8 +9,28 @@ $(document).ready(function() {
         socket.emit("listen-dumps");
     }, 1000);
 
+    var logMaxReached = false;
     socket.on("item-stored", function(data){
-        drawPoints(renderedMap, JSON.parse(data));
+        //console.log(JSON.parse(data)[0].src);
+        //console.log(JSON.parse(data)[0].src.indexOf("6a:86"));
+
+        //if (JSON.parse(data)[0].src.indexOf("6a:86") > 0){
+            $("#recivedpackageInfo").prepend("<div class='packEntry'>"+data+"</div>");
+            if (!logMaxReached){
+                logMaxReached = ($("#recivedpackageInfo div.packEntry").length >35);
+            } else {
+                $("#recivedpackageInfo div.packEntry:last-child").remove();
+            }
+            drawPoints(renderedMap, JSON.parse(data));
+     //   }
+
+        //$("#recivedpackageInfo").prepend("<div class='packEntry'>"+data+"</div>");
+        //if (!logMaxReached){
+        //    logMaxReached = ($("#recivedpackageInfo div.packEntry").length >35);
+        //} else {
+        //    $("#recivedpackageInfo div.packEntry:last-child").remove();
+        //}
+        //drawPoints(renderedMap, JSON.parse(data));
     });
 
 });
@@ -79,6 +99,7 @@ function drawPoints(heatmap, data) {
         //normalized_ssi = (avg_ssi + min_ssi) * (max_radius / -(max_ssi - min_ssi));,
         var distance = calculateDistance(avg_ssi),
             normalized_distance = distance * max_radius / 10;
+
 
         //console.log("normalized_distance: ", normalized_distance);
         heatmap.addPoint(center_x, center_y, normalized_distance, 0.1);

@@ -23,3 +23,7 @@ a {
 #canv{
     border:1px #CCC solid;
 }
+#recivedpackageInfo{
+    position: absolute;
+    left: 50%;
+}
