@@ -52,6 +52,14 @@ router.get('/deviceframes/:mac', function(req, res) {
         });
 });
 
+router.get('/associatedDevices', function(req, res) {
+    var db = mongoUtil.getDb();
+    db.collection('association').find().toArray(function(err, items) {
+        res.json(items);
+    });
+
+});
+
 // time
 // src
 // router
