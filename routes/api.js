@@ -11,7 +11,7 @@ router.post('/adddump', function(req, res) {
     db.collection('raw_dump').insert(req.body, function(err, result){
         console.log("result: ", JSON.stringify(result));
         queueModule.push(JSON.stringify(result));
-        analizeDump(result);
+        analizeDump(result[0]);
         res.sendStatus(200);
     });
 });
@@ -77,8 +77,7 @@ router.get('/deviceframes/:mac', function(req, res) {
 
 function analizeDump(dump){
     var TIME_LIMIT = 180, //seconds
-        H_MAX = -40, //Histeresis max
-        H_MIN = -60;
+        THRESHOLD = 10;
 
     var db = mongoUtil.getDb();
 
@@ -90,46 +89,43 @@ function analizeDump(dump){
 
         });
 
-    function analizeAssociatedDevice(associated){
-        if (!associated){
-            saveDump(dump);
+    function analizeAssociatedDevice(data) {
+        if (data.length === 0) {
+            associateDump(dump);
         } else {
-            if (dump.signal < H_MIN || dump.time > TIME_LIMIT || dump.src === associated.src){
-                associated.time = dump.time;
-                associated.router = dump.router;
-                associated.signal = dump.signal;
-                associated.src = dump.src;
-                updateAssociated(associated);
-            } else if (dump.src != associated.src && associated.signal > H_MAX && dump.signal < associated.signal){
-                    associated.time = dump.time;
-                    associated.router = dump.router;
-                    associated.signal = dump.signal;
-                    associated.src = dump.src;
-                    updateAssociated(associated);
+            var associated = data[0];
+            if (associated.src === dump.src) {
+                updateAssociated(associated, dump);
+            } else {
+                if (Math.abs(dump.signal - associated.signal) > 10) {
+                    updateAssociated(associated, dump);
                 }
-
+            }
         }
     }
-}
-function saveDump(dump) {
-    var db = mongoUtil.getDb();
-    var associated = {
-        time : dump.time,
-        src : dump.src,
-        router : dump.router,
-        signal : dump.signal
-    };
-    db.collection('association').insert(associated, function (err, result) {
-        //console.log("result: ", JSON.stringify(result));
-    });
+
+    function associateDump(dump) {
+        var associated = {
+            time : dump.time,
+            src : dump.src,
+            router : dump.router,
+            signal : dump.signal
+        };
+        db.collection('association').insert(associated, function (err, result) {
+            //console.log("result: ", JSON.stringify(result));
+        });
+    }
+
+    function updateAssociated(associated, dump){
+        associated.time = dump.time;
+        associated.router = dump.router;
+        associated.signal = dump.signal;
+        associated.src = dump.src;
+        db.collection('association').update({_id: associated._id}, associated);
+    }
+
 }
 
-function updateAssociated(associated){
-    var db = mongoUtil.getDb();
-    db.collection('association').update( { "_id":  associated._id},
-        associated,
-        { upsert: false } );
-}
 
 module.exports = router;
 
