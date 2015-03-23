@@ -9,7 +9,7 @@ var queueModule = require( '../modules/queueModule');
 router.post('/adddump', function(req, res) {
     var db = mongoUtil.getDb();
     db.collection('raw_dump').insert(req.body, function(err, result){
-        console.log("result: ", JSON.stringify(result));
+        //console.log("result: ", JSON.stringify(result));
         queueModule.push(JSON.stringify(result));
         analizeDump(result[0]);
         res.sendStatus(200);
@@ -51,24 +51,6 @@ router.get('/deviceframes/:mac', function(req, res) {
             res.json(frames);
         });
 });
-
-/*
-
-
-{ "_id" : ObjectId("5506e5be21f4ba251fab7036"),
- "type" : "request",
-  "time" : "15:16:22.114970",
-   "signal" : -54,
-    "noise" : -100,
-   "bssid" : "Broadcast",
-    "dst" : "Broadcast",
-     "src" : "00:26:ab:f1:da:22",
-      "freq" : 2412 }
-
-
-
-
-    */
 
 // time
 // src
@@ -121,9 +103,10 @@ function analizeDump(dump){
         associated.router = dump.router;
         associated.signal = dump.signal;
         associated.src = dump.src;
-        db.collection('association').update({_id: associated._id}, associated);
-    }
+        db.collection('association').update({_id: associated._id}, associated, function (err, result) {
 
+        });
+    }
 }
 
 
