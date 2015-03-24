@@ -2,7 +2,7 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 var EventModule = function() {
-    this.init();
+    //this.init();
 };
 
 util.inherits(EventModule, EventEmitter);
