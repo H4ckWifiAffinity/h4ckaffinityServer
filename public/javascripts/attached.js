@@ -5,11 +5,17 @@ $(document).ready(function() {
     // Populate the device table on initial page load
     populateTable();
 
+    setInterval(function(){
+        populateTable();
+    }, 10000);
+
 });
 
 function populateTable() {
     // jQuery AJAX call for JSON
     $.getJSON( '/api/associatedDevices', function( data ) {
+        $('#router1List').find('tbody').empty();
+        $('#router2List').find('tbody').empty();
         addRows(data);
     });
 }
