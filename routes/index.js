@@ -15,5 +15,9 @@ router.get('/heatmap', function(req, res) {
     res.render('heatmap', { title: 'Heat Map' });
 });
 
+/* GET and show the attached devices to each router */
+router.get('/attached', function(req, res) {
+   res.render('attached', { title: 'Attached devices to each router' });
+});
 
 module.exports = router;
