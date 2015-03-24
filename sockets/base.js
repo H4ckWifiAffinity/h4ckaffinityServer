@@ -1,5 +1,6 @@
 var mongoUtil = require( '../modules/mongoUtil');
 var queueModule = require( '../modules/queueModule');
+var eventModule = require( '../modules/eventModule');
 module.exports = function (io) {
     var db = mongoUtil.getDb();
     'use strict';
@@ -24,6 +25,10 @@ module.exports = function (io) {
             for (; i < max; i += 1){
                 socket.emit("item-stored", queueModule.shift());
             }
+        });
+
+        eventModule.listenEvent('association_updated', function(data){
+            console.log("hey!!")
         });
     });
 };

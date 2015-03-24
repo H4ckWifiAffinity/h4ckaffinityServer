@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoUtil = require( '../modules/mongoUtil');
 var queueModule = require( '../modules/queueModule');
+var eventModule = require( '../modules/eventModule');
 
 /*
  * POST to add raw dump.
@@ -112,7 +113,7 @@ function analizeDump(dump){
         associated.signal = dump.signal;
         associated.src = dump.src;
         db.collection('association').update({_id: associated._id}, associated, function (err, result) {
-
+            eventModule.collectionUpdated('association');
         });
     }
 }
