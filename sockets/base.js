@@ -20,15 +20,16 @@ module.exports = function (io) {
         });
 
         socket.on("listen-dumps", function (from, msg) {
-            var i = 0,
-                max = queueModule.getLength();
-            for (; i < max; i += 1){
-                socket.emit("item-stored", queueModule.shift());
-            }
-        });
+            eventModule.onQueueDataPush(function (data) {
+                var shiftData;
+                do {
+                    shiftData = queueModule.shift();
+                    if (shiftData) {
+                        socket.emit("item-stored", shiftData);
+                    }
+                } while (shiftData)
 
-        eventModule.listenEvent('association_updated', function(data){
-            //console.log("hey!!");
+            });
         });
     });
 };

@@ -1,20 +1,19 @@
 "use strict"
 
 $(document).ready(function() {
-    var renderedMaps = []
+    var renderedMaps = [];
+    var routers = [];
     for (var i = 0; i < 4; i+=1){
         renderedMaps[i] = renderMap('canv'+(i+1));
     }
 
     var socket = io();
 
-    setInterval(function(){
-        console.log("pido")
-        socket.emit("listen-dumps");
-    }, 1000);
+    socket.emit("listen-dumps");
+
 
     var logMaxReached = false;
-    socket.on("item-stored", function(data){
+    socket.on("item-stored", function(array){
 
         //$("#recivedpackageInfo").prepend("<div class='packEntry'>"+data+"</div>");
         //if (!logMaxReached){
@@ -22,9 +21,19 @@ $(document).ready(function() {
         //} else {
         //    $("#recivedpackageInfo div.packEntry:last-child").remove();
         //}
+        var data = JSON.parse(array)[0];
+        //console.log(data);
+        var index = routers.indexOf(data.router);
+        if (index < 0){
+            routers.push(data.router);
+            index = routers.indexOf(data.router);
 
-        console.log(data);
-        drawPoints(renderedMaps[0], JSON.parse(data));
+            $($("h2").get(index)).append(": "+data.router);
+        }
+
+        //console.log("index ",index);
+        //console.log("data.router ",data.router);
+        drawPoints(renderedMaps[index], data);
 
     });
 
@@ -67,20 +76,15 @@ function drawPoints(heatmap, data) {
         max_ssi = -85,
         min_ssi = -20;
 
-    $.each(data, function (index, value) {
-        var avg_ssi;
-        if (value.averageSignal){
-            avg_ssi = value.averageSignal.toFixed(0) * -1;
-        } else {
-            avg_ssi = value.signal.toFixed(0) * -1;
-        }
 
-        //normalized_ssi = (avg_ssi + min_ssi) * (max_radius / -(max_ssi - min_ssi));,
-        var distance = calculateDistance(avg_ssi),
-            normalized_distance = distance * max_radius / 50;
+    var avg_ssi = data.signal * -1;
 
-        //console.log("normalized_distance: ", normalized_distance);
-        heatmap.addPoint(center_x, center_y, normalized_distance, 0.05);
-    });
+    //normalized_ssi = (avg_ssi + min_ssi) * (max_radius / -(max_ssi - min_ssi));,
+    var distance = calculateDistance(avg_ssi),
+        normalized_distance = distance * max_radius / 50;
+
+    console.log("normalized_distance: ", normalized_distance);
+    heatmap.addPoint(center_x, center_y, normalized_distance, 0.1);
+
 }
 

@@ -1,4 +1,6 @@
-var Queue = require('tiny-queue')
+var Queue = require('tiny-queue');
+var eventModule = require( './eventModule');
+
 function QueueModule (){
     this._queue;
     if (this._queue === undefined)
@@ -8,6 +10,7 @@ function QueueModule (){
 // 'prototype' has improved performances
 QueueModule.prototype.push = function(data) {
     this._queue.push(data);
+    eventModule.queueDataPushed();
 };
 
 QueueModule.prototype.shift = function() {
