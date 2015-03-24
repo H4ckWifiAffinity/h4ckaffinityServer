@@ -5,7 +5,6 @@ $(document).ready(function() {
     // Populate the device table on initial page load
     populateTable();
 
-
 });
 
 function populateTable() {
@@ -16,29 +15,41 @@ function populateTable() {
 }
 
 function addRows(data){
-    var tableRouter1 = '';
-    var tableRouter2 = '';
     $.each(data, function(){
         if(this.router === "001") {
-            tableRouter1 += '<tr>';
-            tableRouter1 += '<td>' + this.router;
-            tableRouter1 += '<td>' + this.time;
-            tableRouter1 += '<td>' + this.src;
-            tableRouter1 += '<td>' + this.signal;
-            tableRouter1 += '</tr>';
+            $('#router1List').find('tbody').append(buildDeviceInfo(this));
         }
         else if (this.router == "luis") {
-            tableRouter2 += '<tr>';
-            tableRouter2 += '<td>' + this.router;
-            tableRouter2 += '<td>' + this.time;
-            tableRouter2 += '<td>' + this.src;
-            tableRouter2 += '<td data=' + -this.signal + '>' + this.signal;
-            tableRouter2 += '</tr>';
+            $('#router2List').find('tbody').append(buildDeviceInfo(this));
         }
     });
 
-    // Inject the whole content string into our existing HTML table
-    $('#router1List table tbody').html(tableRouter1);
-    $('#router2List table tbody').html(tableRouter2);
+}
 
+function buildDeviceInfo(device) {
+    var color = 100 + device.signal;
+    var tableRouter = '';
+    tableRouter += '<tr>';
+    tableRouter += '<td class="time">';
+    tableRouter += getTimeFromTimestamp(device.time);
+    tableRouter += '</td>';
+    tableRouter += '<td class="mac">';
+    tableRouter += device.src;
+    tableRouter += '</td>';
+    tableRouter += '<td style="background-color: hsl(0,'+color+'%,75%)">';
+    tableRouter += device.signal;
+    tableRouter += '</td>';
+    tableRouter += '</tr>';
+    return tableRouter;
+}
+
+function getTimeFromTimestamp(timestamp) {
+    var date = new Date(timestamp*1000);
+
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+
+    var formattedTime = hours + ':' + minutes.substr(minutes.length-2);
+
+    return formattedTime;
 }
