@@ -28,7 +28,7 @@ module.exports = function (io) {
         });
 
         eventModule.listenEvent('association_updated', function(data){
-            console.log("hey!!")
+            //console.log("hey!!");
         });
     });
 };

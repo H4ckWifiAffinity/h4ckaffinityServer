@@ -113,7 +113,7 @@ function analizeDump(dump){
         associated.signal = dump.signal;
         associated.src = dump.src;
         db.collection('association').update({_id: associated._id}, associated, function (err, result) {
-            eventModule.collectionUpdated('association');
+            //eventModule.collectionUpdated('association');
         });
     }
 }

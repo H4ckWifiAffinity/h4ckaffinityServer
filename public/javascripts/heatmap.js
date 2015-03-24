@@ -1,28 +1,20 @@
 "use strict"
 
 $(document).ready(function() {
-    var renderedMap = renderMap();
+    var renderedMaps = []
+    for (var i = 0; i < 4; i+=1){
+        renderedMaps[i] = renderMap('canv'+(i+1));
+    }
 
     var socket = io();
 
     setInterval(function(){
+        console.log("pido")
         socket.emit("listen-dumps");
     }, 1000);
 
     var logMaxReached = false;
     socket.on("item-stored", function(data){
-        //console.log(JSON.parse(data)[0].src);
-        //console.log(JSON.parse(data)[0].src.indexOf("6a:86"));
-
-        //if (JSON.parse(data)[0].src.indexOf("6a:86") > 0){
-            $("#recivedpackageInfo").prepend("<div class='packEntry'>"+data+"</div>");
-            if (!logMaxReached){
-                logMaxReached = ($("#recivedpackageInfo div.packEntry").length >35);
-            } else {
-                $("#recivedpackageInfo div.packEntry:last-child").remove();
-            }
-            drawPoints(renderedMap, JSON.parse(data));
-     //   }
 
         //$("#recivedpackageInfo").prepend("<div class='packEntry'>"+data+"</div>");
         //if (!logMaxReached){
@@ -30,50 +22,39 @@ $(document).ready(function() {
         //} else {
         //    $("#recivedpackageInfo div.packEntry:last-child").remove();
         //}
-        //drawPoints(renderedMap, JSON.parse(data));
+
+        console.log(data);
+        drawPoints(renderedMaps[0], JSON.parse(data));
+
     });
 
 });
 
-function renderMap() {
-    var devicesData,
-        canvas,
-        heatmap,
-        router_image;
+function renderMap(selector) {
+    var canvas,
+        heatmap;
 
-    canvas = document.getElementById("canv");
+    canvas = document.getElementById(selector);
     heatmap = createWebGLHeatmap({canvas: canvas, intensityToAlpha: true});
-    //var heatmap = createWebGLHeatmap({canvas: canvas, intensityToAlpha:true, alphaRange: [1, 0]}); // inverse transparency
-    //var heatmap = createWebGLHeatmap({canvas: canvas, intensityToAlpha:true, alphaRange: [0, 0.05]}); // steep transparency
-    //var heatmap = createWebGLHeatmap({canvas: canvas, intensityToAlpha:true, gradientTexture:'deep-sea-gradient.png'});
-    //var heatmap = createWebGLHeatmap({canvas: canvas, intensityToAlpha:false, gradientTexture:'skyline-gradient.png'});
-    //var heatmap = createWebGLHeatmap({width: 500, height: 500}); // statically sized heatmap
-    document.body.appendChild(heatmap.canvas);
-
-
 
     var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
         window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-        var update = function () {
-        //heatmap.addPoint(100, 100, 100, 10/255);
-        //heatmap.adjustSize(); // can be commented out for statically sized heatmaps, resize clears the map
+    var update = function () {
         heatmap.update(); // adds the buffered points
         heatmap.display(); // adds the buffered points
-        heatmap.multiply(0.9995);
+        heatmap.multiply(0.995);
         heatmap.blur();
         heatmap.clamp(0.0, 1.0); // depending on usecase you might want to clamp it
         raf(update);
     }
     raf(update);
-
-      canvas.onclick = function () {
+    canvas.onclick = function () {
         heatmap.clear();
     }
 
-
-    $.getJSON('/api/devicelist', function (data) {
-        drawPoints(heatmap, data);
-    });
+    //$.getJSON('/api/devicelist', function (data) {
+    //    drawPoints(heatmap, data);
+    //});
 
     return heatmap;
 }
@@ -83,11 +64,9 @@ function drawPoints(heatmap, data) {
     var center_x = heatmap.width / 2,
         center_y = heatmap.height / 2,
         max_radius = center_x > center_y ? center_y : center_x,
-        max_ssi = -65,
-        min_ssi = -40;
-    /*    console.log(center_x);
-     console.log(center_y);
-     console.log(max_radius);*/
+        max_ssi = -85,
+        min_ssi = -20;
+
     $.each(data, function (index, value) {
         var avg_ssi;
         if (value.averageSignal){
@@ -98,11 +77,10 @@ function drawPoints(heatmap, data) {
 
         //normalized_ssi = (avg_ssi + min_ssi) * (max_radius / -(max_ssi - min_ssi));,
         var distance = calculateDistance(avg_ssi),
-            normalized_distance = distance * max_radius / 10;
-
+            normalized_distance = distance * max_radius / 50;
 
         //console.log("normalized_distance: ", normalized_distance);
-        heatmap.addPoint(center_x, center_y, normalized_distance, 0.1);
+        heatmap.addPoint(center_x, center_y, normalized_distance, 0.05);
     });
 }
 

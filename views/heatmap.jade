@@ -1,14 +1,38 @@
 extends layout
-
 block content
-    h1= title
-    a(href="/devices") Devices list
-    br
-    div#canvasContainer
-        canvas#canv(width='800', height='600')
-        span#status
-        img.router-img(src="/images/router.png")
-        div#recivedpackageInfo
+    .container
+        .row
+            h1= title
+            a(href="/devices") Devices list
+
+    .container-fluid
+        .row
+            #router1List.col-lg-6
+                .text-center
+                    h2 Router 1
+                    .canvasContainer
+                        canvas#canv1.heatmap
+                        img.router-img(src="/images/router.png")
+            #router2List.col-lg-6
+                .text-center
+                    h2 Router 2
+                    .canvasContainer
+                        canvas#canv2.heatmap
+                        img.router-img(src="/images/router.png")
+        .row
+            #router1List.col-lg-6
+                .text-center
+                    h2 Router 3
+                    .canvasContainer
+                        canvas#canv3.heatmap
+                        img.router-img(src="/images/router.png")
+
+            #router2List.col-lg-6
+                .text-center
+                    h2 Router 4
+                    .canvasContainer
+                        canvas#canv4.heatmap
+                        img.router-img(src="/images/router.png")
 
     script(src='/javascripts/webgl-heatmap.js')
     script(src='/socket.io/socket.io.js')
