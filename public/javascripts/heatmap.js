@@ -45,10 +45,6 @@ function renderMap(selector) {
         heatmap.clear();
     }
 
-    //$.getJSON('/api/devicelist', function (data) {
-    //    drawPoints(heatmap, data);
-    //});
-
     return heatmap;
 }
 

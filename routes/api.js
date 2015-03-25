@@ -56,20 +56,21 @@ router.get('/deviceframes/:mac', function(req, res) {
 router.get('/associatedDevices', function(req, res) {
     var db = mongoUtil.getDb();
     db.collection('association').find().toArray(function(err, items) {
+        var timeLimit = Math.floor(new Date().getTime()/1000) - (5 * 60);
+        items.forEach(function (element, index, array){
+            if (element.time < timeLimit){
+                db.collection('association').remove({src : element.src}, function (err, result) {
+                });
+                array.splice(index, 1);
+            }
+        });
         res.json(items);
     });
 
 });
 
-// time
-// src
-// router
-// signal
 
 function analizeDump(dump){
-    var TIME_LIMIT = 180, //seconds
-        THRESHOLD = 10;
-
     var db = mongoUtil.getDb();
 
     db.collection('association').aggregate(
@@ -88,7 +89,6 @@ function analizeDump(dump){
             if (associated.router === dump.router) {
                 updateAssociated(associated, dump);
             } else {
-                //console.log('Math.abs(dump.signal - associated.signal): ', Math.abs(dump.signal - associated.signal));
                 if (Math.abs(dump.signal - associated.signal) > 10) {
                     updateAssociated(associated, dump);
                 }
@@ -104,7 +104,7 @@ function analizeDump(dump){
             signal : dump.signal
         };
         db.collection('association').insert(associated, function (err, result) {
-            //console.log("result: ", JSON.stringify(result));
+
         });
     }
 
@@ -114,11 +114,9 @@ function analizeDump(dump){
         associated.signal = dump.signal;
         associated.src = dump.src;
         db.collection('association').update({_id: associated._id}, associated, function (err, result) {
-            //eventModule.collectionUpdated('association');
         });
     }
 }
-
 
 module.exports = router;
 
