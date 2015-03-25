@@ -33,9 +33,25 @@ a {
     left: 50%;
 }
 
-.router div {
+.router .table-devices {
     height: 300px;
     overflow: scroll;
+    clear: both;
+}
+
+.router .table-title {
+    clear: both;
+    margin-top: 10px;
+}
+
+.router .table-title .pull-left {
+    font-size: 24px;
+    margin: 15px 0;
+}
+
+.router .table-title .pull-right {
+    font-size: 18px;
+    margin: 20px 0;
 }
 
 .glyphicon {
