@@ -85,9 +85,10 @@ function analizeDump(dump){
             associateDump(dump);
         } else {
             var associated = data[0];
-            if (associated.src === dump.src) {
+            if (associated.router === dump.router) {
                 updateAssociated(associated, dump);
             } else {
+                //console.log('Math.abs(dump.signal - associated.signal): ', Math.abs(dump.signal - associated.signal));
                 if (Math.abs(dump.signal - associated.signal) > 10) {
                     updateAssociated(associated, dump);
                 }

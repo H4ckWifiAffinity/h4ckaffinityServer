@@ -20,6 +20,7 @@ a {
     margin-left: auto;
     margin-right: auto;
     top: 170px;
+    opacity: 0.1;
 }
 .heatmap{
     border:1px #CCC solid;
