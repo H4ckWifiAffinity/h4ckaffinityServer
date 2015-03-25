@@ -6,6 +6,10 @@ a {
   color: #00B7FF;
 }
 
+.pull-right a {
+    color: white;
+}
+
 .canvasContainer{
     position: relative;
 }
@@ -28,8 +32,32 @@ a {
     left: 50%;
 }
 
-.router {
-    background-color: #eee;
-    height: 360px;
+.router div {
+    height: 300px;
     overflow: scroll;
+}
+
+.glyphicon {
+    padding: 10px;
+}
+
+.title {
+    background-color: #8e91bf;
+}
+
+.frontpage {
+    text-align: center;
+    margin-top: 150px;
+}
+
+.frontpage .button {
+    background-color: #8e91bf;
+    padding: 20px;
+    width: 200px;
+    margin: 10px auto;
+    font-size: 20px;
+}
+
+.frontpage .button a {
+    color: white;
 }

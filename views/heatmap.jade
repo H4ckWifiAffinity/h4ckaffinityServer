@@ -1,11 +1,16 @@
 extends layout
 block content
-    .container
-        .row
-            h1= title
-            a(href="/devices") Devices list
+    .container-fluid
+        .row.title
+            .col-lg-8
+                h1= title
+            .col-lg-4
+                div.pull-right
+                    a(href="/") Back to index
+                    span.glyphicon.glyphicon-log-out
 
     .container-fluid
+
         .row
             #router1List.col-lg-6
                 .text-center

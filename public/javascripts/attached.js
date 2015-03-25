@@ -5,7 +5,7 @@ $(document).ready(function() {
     // Populate the device table on initial page load
     populateTable();
 
-    setInterval(function(){
+    setInterval(function() {
         populateTable();
     }, 10000);
 
@@ -13,20 +13,28 @@ $(document).ready(function() {
 
 function populateTable() {
     // jQuery AJAX call for JSON
-    $.getJSON( '/api/associatedDevices', function( data ) {
+    $.getJSON('/api/associatedDevices', function(data) {
         $('#router1List').find('tbody').empty();
         $('#router2List').find('tbody').empty();
+        $('#router3List').find('tbody').empty();
+        $('#router4List').find('tbody').empty();
         addRows(data);
     });
 }
 
-function addRows(data){
+function addRows(data) {
     $.each(data, function(){
         if(this.router === "001") {
             $('#router1List').find('tbody').append(buildDeviceInfo(this));
         }
-        else if (this.router == "luis") {
+        else if (this.router == "002") {
             $('#router2List').find('tbody').append(buildDeviceInfo(this));
+        }
+        else if (this.router == "003") {
+            $('#router3List').find('tbody').append(buildDeviceInfo(this));
+        }
+        else if (this.router == "004") {
+            $('#router4List').find('tbody').append(buildDeviceInfo(this));
         }
     });
 

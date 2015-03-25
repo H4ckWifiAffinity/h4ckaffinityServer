@@ -1,46 +1,55 @@
 extends layout
 block content
 
+    .container-fluid
+        .row.title
+            .col-lg-8
+                h1= title
+            .col-lg-4
+                div.pull-right
+                    a(href="/") Back to index
+                    span.glyphicon.glyphicon-log-out
+
     .container
-        .row
-
-        h1= title
-
 
         #router1List.router.col-lg-6
-            h2 Router 1
-            table(class="table table-striped table-bordered dataTable no-footer device-table")
-                thead
-                    th time
-                    th MAC address
-                    th signal (dbm)
-                tbody
+            h2 Router 001
+            div
+                table(class="table table-striped table-bordered dataTable no-footer device-table")
+                    thead
+                        th last seen
+                        th MAC address
+                        th signal (dbm)
+                    tbody
 
         #router2List.router.col-lg-6
-            h2 Router 2
-            table(class="table table-striped table-bordered dataTable no-footer device-table")
-                thead
-                    th time
-                    th MAC address
-                    th signal (dbm)
-                tbody
+            h2 Router 002
+            div
+                table(class="table table-striped table-bordered dataTable no-footer device-table")
+                    thead
+                        th last seen
+                        th MAC address
+                        th signal (dbm)
+                    tbody
 
-        #router1List.router.col-lg-6
-            h2 Router 3
-            table(class="table table-striped table-bordered dataTable no-footer device-table")
-                thead
-                    th time
-                    th MAC address
-                    th signal (dbm)
-                tbody
+        #router3List.router.col-lg-6
+            h2 Router 003
+            div
+                table(class="table table-striped table-bordered dataTable no-footer device-table")
+                    thead
+                        th last seen
+                        th MAC address
+                        th signal (dbm)
+                    tbody
 
-        #router2List.router.col-lg-6
-            h2 Router 4
-            table(class="table table-striped table-bordered dataTable no-footer device-table")
-                thead
-                    th time
-                    th MAC address
-                    th signal (dbm)
-                tbody
+        #router4List.router.col-lg-6
+            h2 Router 004
+            div
+                table(class="table table-striped table-bordered dataTable no-footer device-table")
+                    thead
+                        th last seen
+                        th MAC address
+                        th signal (dbm)
+                    tbody
 
     script(src='/javascripts/attached.js')
