@@ -14,10 +14,10 @@ $(document).ready(function() {
 function populateTable() {
     // jQuery AJAX call for JSON
     $.getJSON('/api/associatedDevices', function(data) {
-        $('#router1List').find('tbody').empty();
-        $('#router2List').find('tbody').empty();
-        $('#router3List').find('tbody').empty();
-        $('#router4List').find('tbody').empty();
+        $('#router1List').find('tbody').fadeOut().empty();
+        $('#router2List').find('tbody').fadeOut().empty();
+        $('#router3List').find('tbody').fadeOut().empty();
+        $('#router4List').find('tbody').fadeOut().empty();
         addRows(data);
     });
 }
@@ -37,7 +37,10 @@ function addRows(data) {
             $('#router4List').find('tbody').append(buildDeviceInfo(this));
         }
     });
-
+    $('#router1List').find('tbody').fadeIn();
+    $('#router2List').find('tbody').fadeIn();
+    $('#router3List').find('tbody').fadeIn();
+    $('#router4List').find('tbody').fadeIn();
 }
 
 function buildDeviceInfo(device) {
